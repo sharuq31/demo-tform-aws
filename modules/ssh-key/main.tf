@@ -8,7 +8,7 @@ resource "tls_private_key" "key" {
 
 resource "local_file" "private_key" {
   filename          = "${var.namespace}-key.pem"
-  local_sensitive_file = tls_private_key.key.private_key_pem
+  sensitive_file    = tls_private_key.key.private_key_pem
   file_permission   = "0400"
 }
 
