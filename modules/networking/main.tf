@@ -1,3 +1,7 @@
+variable "ingressports" {
+  type    = list(number)
+  default = [8080, 22]
+}
 
 // TODO break public and private into separate AZs
 data "aws_availability_zones" "available" {}
@@ -21,12 +25,14 @@ resource "aws_security_group" "allow_ssh_pub" {
   description = "Allow SSH inbound traffic"
   vpc_id      = module.vpc.vpc_id
 
-  ingress {
-    description = "SSH from the internet"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+  dynamic "ingress" {
+    for_each = var.ingressports
+    content {
+      protocol    = "tcp"
+      from_port   = ingress.value
+      to_port     = ingress.value
+      cidr_blocks = ["0.0.0.0/0"]
+    }
   }
 
   egress {

@@ -45,8 +45,23 @@ resource "aws_instance" "ec2_public" {
   }
   
   //chmod key 400 on EC2 instance
-  provisioner "remote-exec" {
-    inline = ["chmod 400 ~/${var.key_name}.pem"]
+//  provisioner "remote-exec" {
+//    inline = ["chmod 400 ~/${var.key_name}.pem"]
+
+  provisioner "remote-exec"  {
+    inline  = [
+      "chmod 400 ~/${var.key_name}.pem",
+      "sudo yum update -y",
+      "sudo yum install git -y",
+      "sudo amazon-linux-extras install java-openjdk11 -y",
+      "sudo yum -y install wget",
+      "sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo",
+      "sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key",
+      "sudo yum upgrade -y",
+      "sudo yum install jenkins -y",
+      "sudo systemctl start jenkins",
+    ]
+  
 
     connection {
       type        = "ssh"
