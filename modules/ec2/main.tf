@@ -15,10 +15,17 @@ data "aws_ami" "amazon-linux-2" {
 resource "aws_instance" "ec2_public" {
   ami                         = data.aws_ami.amazon-linux-2.id
   associate_public_ip_address = true
-  instance_type               = "t2.micro"
+  instance_type               = "t2.xlarge"
   key_name                    = var.key_name
   subnet_id                   = var.vpc.public_subnets[0]
   vpc_security_group_ids      = [var.sg_pub_id]
+
+  root_block_device {
+    volume_size           = "300"
+    volume_type           = "gp2"
+    encrypted             = true
+    delete_on_termination = true
+  }
 
   tags = {
     "Name" = "${var.namespace}-EC2-PUBLIC"
